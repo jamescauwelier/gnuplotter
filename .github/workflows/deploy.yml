@@ -17,13 +17,20 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: actions-rs/cargo@v1
+      - name: Testing all targets (except documentation)
+        uses: actions-rs/cargo@v1
         with:
-          command: build
-          args: --release --all-features
+          command: test
+          args: --all-targets
+      - name: Testing documentation
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --doc
       - name: Check semver
         uses: obi1kenobi/cargo-semver-checks-action@v2
-      - uses: actions-rs/cargo@v1
+      - name: Publish to crates.io
+        uses: actions-rs/cargo@v1
         with:
           command: publish
           args: --release --all-features --token=${{secrets.CRATESIO}}
