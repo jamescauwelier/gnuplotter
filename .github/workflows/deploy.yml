@@ -1,7 +1,7 @@
 on:
   push:
     # Pattern matched against refs/tags
-    # e.g. v0.1.0/alpha, v1.0.0/beta, v1.0.0-rc.1
+    # e.g. v0.1.0-alpha, v1.0.0-beta, v1.0.0-rc.1
     tags:
       - 'v[0-9.]+/**'
 
