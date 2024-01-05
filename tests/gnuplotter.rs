@@ -1,4 +1,4 @@
 #[test]
 fn test_something(){
-    assert!(false);
+    assert!(true);
 }

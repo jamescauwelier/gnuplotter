@@ -6,7 +6,7 @@
 /// # Example
 ///
 /// ```
-/// assert!(true);
+/// assert!(false);
 /// ```
 fn hello() -> String {
     "Hello".into()
