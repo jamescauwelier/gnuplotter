@@ -1,5 +1,6 @@
 [package]
 name = "gnuplotter_macros"
+description = "Dependency for gnuplotter providing it with procedural macro utilities"
 version = "0.1.6-alpha"
 edition = "2021"
 license-file = "../.github/LICENSE"
