@@ -33,4 +33,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: publish
-          args: --all-features --allow-dirty --token=${{secrets.CRATESIO}}
+          args: --all-features --allow-dirty -p gnuplotter --token=${{secrets.CRATESIO}}

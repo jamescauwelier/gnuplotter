@@ -3,15 +3,10 @@ name = "gnuplotter"
 description = "A simple utility repo to use the gnuplot library in rust"
 version = "0.1.5-alpha"
 edition = "2021"
-license-file = "./.github/LICENSE"
+license-file = "../.github/LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[lib]
-proc-macro = true
-
 [dependencies]
-derive_builder = "0.12.0"
-quote = "1.0.35"
-syn = "2.0.48"
-tempfile = "3.9.0"
+gnuplotter_core = { path = "../gnuplotter_core" }
+gnuplotter_macros = { path = "../gnuplotter_macros" }

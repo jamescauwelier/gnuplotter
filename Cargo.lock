@@ -112,7 +112,20 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 name = "gnuplotter"
 version = "0.1.5-alpha"
 dependencies = [
+ "gnuplotter_core",
+ "gnuplotter_macros",
+]
+
+[[package]]
+name = "gnuplotter_core"
+version = "0.0.0"
+
+[[package]]
+name = "gnuplotter_macros"
+version = "0.0.0"
+dependencies = [
  "derive_builder",
+ "gnuplotter_core",
  "quote",
  "syn 2.0.48",
  "tempfile",
@@ -120,7 +133,7 @@ dependencies = [
 
 [[package]]
 name = "gnuplotter_tests"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "gnuplotter",
 ]

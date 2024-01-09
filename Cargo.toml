@@ -1,5 +1,5 @@
 [workspace]
 
-members = [
-	"gnuplotter", "gnuplotter_tests",
+members = ["gnuplotter", "gnuplotter_core",
+    "gnuplotter_macros", "gnuplotter_tests",
 ]
