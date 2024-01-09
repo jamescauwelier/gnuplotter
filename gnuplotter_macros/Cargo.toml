@@ -11,7 +11,7 @@ license-file = "../.github/LICENSE"
 proc-macro = true
 
 [dependencies]
-gnuplotter_core = { path = "../gnuplotter_core", version= "0.1.6-alpha" }
+gnuplotter_core = { path = "../gnuplotter_core", version= "0.1.7-alpha" }
 derive_builder = "0.12.0"
 quote = "1.0.35"
 syn = "2.0.48"
