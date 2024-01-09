@@ -1,0 +1,16 @@
+[package]
+name = "rustdoc"
+edition = "2021"
+version = "0.0.0"
+publish = false
+
+[workspace]
+members = []
+
+[dependencies.gnuplotter]
+path = "/Users/jamescauwelier/Projects/accelerated-dev-llc/ergodic-cloud/gnuplotter"
+features = []
+
+[lib]
+path = "lib.rs"
+required-features = []
