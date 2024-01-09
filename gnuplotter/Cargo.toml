@@ -8,5 +8,5 @@ license-file = "../.github/LICENSE"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gnuplotter_core = { path = "../gnuplotter_core" }
-gnuplotter_macros = { path = "../gnuplotter_macros" }
+gnuplotter_core = { path = "../gnuplotter_core", version = "0.1.6-alpha" }
+gnuplotter_macros = { path = "../gnuplotter_macros", version = "0.1.6-alpha" }
