@@ -27,18 +27,24 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
                 // a simple comment
             };
             for field in s.fields {
+
                 let field_name = field.ident.unwrap();
                 let field_type = field.ty;
-                println!("Producing setters for {} taking type {:?}", field_name, field_type.type_id());
+
                 definitions = quote!{
                     #definitions
-                    fn #field_name(&mut self, value: #field_type) -> &mut Self;
+                    fn #field_name<T>(&mut self, value: T) -> &mut Self
+                        where #field_type: From<T>;
                 };
+
                 implementations = quote! {
                     #implementations
 
-                    fn #field_name(&mut self, value: #field_type) -> &mut Self {
-                        self.#field_name = value;
+                    fn #field_name<T>(&mut self, value: T) -> &mut Self
+                    where
+                        #field_type: From<T>
+                    {
+                        self.#field_name = value.into();
                         self
                     }
                 };

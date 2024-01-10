@@ -1,5 +1,11 @@
 [workspace]
+resolver = "2"
 
 members = ["gnuplotter", "gnuplotter_core",
     "gnuplotter_macros", "gnuplotter_tests",
 ]
+
+[profile.test]
+lto = false
+opt-level = 0
+overflow-checks = false
