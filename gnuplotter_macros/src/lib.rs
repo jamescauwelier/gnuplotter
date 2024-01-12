@@ -9,12 +9,16 @@ use std::any::Any;
 use quote::{format_ident, quote, TokenStreamExt};
 use syn::{parse_macro_input, DeriveInput, Attribute};
 
+// #[proc_macro_derive(Axis)]
+// pub fn
+
 #[proc_macro_derive(Plot)]
 pub fn derive_plot(input: TokenStream) -> TokenStream {
 
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
 
+    let mut command_appenders = quote! {};
     let (info, definitions, implementations) = match input.data {
         syn::Data::Struct(s) => {
 
@@ -30,6 +34,11 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
 
                 let field_name = field.ident.unwrap();
                 let field_type = field.ty;
+
+                command_appenders = quote!{
+                    #command_appenders
+                    commands.append(&mut self.#field_name.as_commands());
+                };
 
                 definitions = quote!{
                     #definitions
@@ -64,6 +73,9 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
 
+        use ::std::collections::VecDeque;
+        use gnuplotter::prelude::*;
+
         trait #builder {
             #definitions
         }
@@ -75,6 +87,15 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
             fn plot(&mut self) {
                 println!(#info);
                 println!("Plotting...");
+            }
+        }
+
+        impl GnuCommandFactory for #name {
+            fn as_commands(&self) -> VecDeque<GnuCommand> {
+                let mut commands = VecDeque::new();
+                #command_appenders
+
+                commands
             }
         }
     };

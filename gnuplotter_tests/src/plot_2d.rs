@@ -3,8 +3,8 @@ use gnuplotter::prelude::*;
 #[derive(Clone, PartialEq, Eq, Debug, Default, Plot)]
 pub struct Plot2D {
     title: Maybe<Title>,
-    x_label: Required<XLabel>,
-    y_label: Required<YLabel>,
+    x: Required<Axis<X>>,
+    y: Required<Axis<Y>>,
 }
 
 impl Plot2D {
@@ -20,20 +20,28 @@ mod tests {
     use super::*;
 
     #[test]
+    #[should_panic(expected = "A required value must be present before commands can be generated.")]
+    fn test_an_axis_requires_a_label(){
+        let mut plot = Plot2D::default();
+        let mut commands = plot.as_commands();
+
+        assert_eq!(commands.len(), 3);
+    }
+
+    #[test]
     fn test_plot_creation() {
         let mut plot = Plot2D::default();
 
         assert_eq!(plot.title, Maybe::Nothing);
-        assert_eq!(plot.x_label, Missing);
-        assert_eq!(plot.y_label, Missing);
+        assert_eq!(plot.x, Required::Missing);
+        assert_eq!(plot.y, Required::Missing);
 
         plot.title("an experiment");
-        plot.x_label("label x");
-        plot.y_label("label y");
-        plot.plot();
+        plot.x.label("label x");
+        plot.y.label("label y");
 
-        assert_eq!(plot.title, Maybe::value(Title::new("an experiment")));
-        assert_eq!(plot.x_label, Required::value(XLabel::new("label x")));
-        assert_eq!(plot.y_label, Required::value(YLabel::new("label y")));
+        let mut commands = plot.as_commands();
+
+        assert_eq!(commands.len(), 3);
     }
 }

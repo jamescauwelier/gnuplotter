@@ -21,6 +21,13 @@ impl<T> Required<T> {
             Required::Value(value) => value
         }
     }
+
+    pub fn get_mut_ref(&mut self) -> &mut T {
+        match self {
+            Required::Missing => panic!("Required value is missing."),
+            Required::Value(value) => value
+        }
+    }
 }
 
 pub mod required_conversions {
