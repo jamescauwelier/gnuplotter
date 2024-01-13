@@ -1,5 +1,13 @@
 use gnuplotter::prelude::*;
 
+#[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
+pub struct CustomAxis<D>
+where
+    D: Dimension
+{
+    label: Required<Label<D>>
+}
+
 #[derive(Clone, PartialEq, Eq, Debug, Default, Plot)]
 pub struct Plot2D {
     title: Maybe<Title>,
@@ -18,6 +26,15 @@ impl Plot2D {
 mod tests {
     use gnuplotter::prelude::Required::Missing;
     use super::*;
+
+    #[test]
+    fn test_custom_axis_creation(){
+        let mut axis = CustomAxis::<X>::default();
+        axis.something();
+        // let mut commands = axis.as_commands();
+        //
+        // assert_eq!(commands.len(), 0);
+    }
 
     #[test]
     #[should_panic(expected = "A required value must be present before commands can be generated.")]

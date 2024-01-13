@@ -135,6 +135,7 @@ version = "0.1.7-alpha"
 dependencies = [
  "derive_builder",
  "gnuplotter_core",
+ "proc-macro2",
  "quote",
  "syn 2.0.48",
  "tempfile",
