@@ -89,21 +89,12 @@ pub fn create_axis_expansions(input: DeriveInput) -> TokenStream {
             println!("Adding setter for field: {}", field_name);
             trait_methods = quote! {
                 #trait_methods
-                fn #field_name<T>(&mut self, value: T) where #field_type: From<T>, T: Debug;
+                fn #field_name(&mut self, value: #field_type);
             };
-            // fn #field_name<T>(&mut self, value: T) -> &mut Self
-            // where #field_type: From<T> {
-            //     self.#field_name = value.into();
-            // }
             trait_method_implementations = quote! {
                 #trait_method_implementations
-                fn #field_name<T>(&mut self, value: T)
-                where
-                    #field_type: From<T>,
-                    T: Debug
-                {
-                    println!("Setting field: {}, to value: {:?}", stringify!(#field_name), value);
-                    self.#field_name = value.into();
+                fn #field_name(&mut self, value: #field_type) {
+                    self.#field_name = value;
                 }
             };
             continue;
@@ -154,9 +145,7 @@ pub fn create_axis_expansions(input: DeriveInput) -> TokenStream {
     TokenStream::from(
         quote! {
             #[doc = #comment]
-
             #command_factory_impl
-
             #axis_trait
             #axis_impl
         }

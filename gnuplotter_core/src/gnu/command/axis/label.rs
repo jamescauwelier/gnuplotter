@@ -37,15 +37,6 @@ where
     }
 }
 
-impl<D> From<Label<D>> for Required<Label<D>>
-    where
-        D: Dimension
-{
-    fn from(label: Label<D>) -> Self {
-        Required::Value(label)
-    }
-}
-
 impl<D> From<&str> for Required<Label<D>>
     where
         D: Dimension

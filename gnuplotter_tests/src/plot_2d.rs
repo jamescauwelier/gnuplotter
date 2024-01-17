@@ -40,7 +40,7 @@ mod tests {
 
         assert_eq!(commands.len(), 0);
 
-        axis.label("label y");
+        axis.label("label y".into());
         let commands = axis.as_commands();
 
         assert_eq!(commands.len(), 1);
@@ -56,7 +56,7 @@ mod tests {
     #[test]
     fn test_axis_creation_with_required_label(){
         let mut axis = XAxisWithRequiredLabel::default();
-        axis.label("label x");
+        axis.label("label x".into());
         let commands = axis.as_commands();
 
         assert_eq!(commands.len(), 1);
