@@ -16,7 +16,7 @@ use crate::axis::create_axis_expansions;
 #[proc_macro_derive(Axis)]
 pub fn derive_axis(input:TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    dbg!(&input);
+    // dbg!(&input);
 
     create_axis_expansions(input)
 }

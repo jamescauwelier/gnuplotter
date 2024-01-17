@@ -1,11 +1,17 @@
+use std::marker::PhantomData;
 use gnuplotter::prelude::*;
+use std::fmt::Debug;
 
 #[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
-pub struct CustomAxis<D>
-where
-    D: Dimension
+pub struct XAxisWithRequiredLabel
 {
-    label: Required<Label<D>>
+    label: Required<Label<X>>
+}
+
+#[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
+pub struct YAxisWithOptionalLabel
+{
+    label: Maybe<Label<Y>>
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Default, Plot)]
@@ -28,19 +34,39 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_custom_axis_creation(){
-        let mut axis = CustomAxis::<X>::default();
-        axis.something();
-        // let mut commands = axis.as_commands();
-        //
-        // assert_eq!(commands.len(), 0);
+    fn test_axis_creation_with_optional_label(){
+        let mut axis = YAxisWithOptionalLabel::default();
+        let commands = axis.as_commands();
+
+        assert_eq!(commands.len(), 0);
+
+        axis.label("label y");
+        let commands = axis.as_commands();
+
+        assert_eq!(commands.len(), 1);
+    }
+
+    #[test]
+    #[should_panic(expected = "A required value must be present before commands can be generated.")]
+    fn test_axis_creation_with_required_label_requires_label(){
+        let axis = XAxisWithRequiredLabel::default();
+        let _commands = axis.as_commands();
+    }
+
+    #[test]
+    fn test_axis_creation_with_required_label(){
+        let mut axis = XAxisWithRequiredLabel::default();
+        axis.label("label x");
+        let commands = axis.as_commands();
+
+        assert_eq!(commands.len(), 1);
     }
 
     #[test]
     #[should_panic(expected = "A required value must be present before commands can be generated.")]
     fn test_an_axis_requires_a_label(){
-        let mut plot = Plot2D::default();
-        let mut commands = plot.as_commands();
+        let plot = Plot2D::default();
+        let commands = plot.as_commands();
 
         assert_eq!(commands.len(), 3);
     }
@@ -57,7 +83,7 @@ mod tests {
         plot.x.label("label x");
         plot.y.label("label y");
 
-        let mut commands = plot.as_commands();
+        let commands = plot.as_commands();
 
         assert_eq!(commands.len(), 3);
     }

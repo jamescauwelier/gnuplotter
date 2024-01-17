@@ -16,7 +16,7 @@ impl<D> Label<D>
 where
     D: Dimension
 {
-    pub(in super) fn new(text: &str) -> Self {
+    pub fn new(text: &str) -> Self {
         Label {
             text: text.into(),
             dimension: PhantomData
@@ -46,19 +46,31 @@ impl<D> From<Label<D>> for Required<Label<D>>
     }
 }
 
-impl GnuCommandFactory for Label<X> {
-    fn as_commands(&self) -> VecDeque<GnuCommand> {
-        vec![
-            GnuCommand::new(format!("set xlabel \"{}\"", self.text))
-        ].into()
+impl<D> From<&str> for Required<Label<D>>
+    where
+        D: Dimension
+{
+    fn from(text: &str) -> Self {
+        Required::Value(Label::new(text))
     }
 }
 
-impl GnuCommandFactory for Label<Y> {
+impl<D> From<&str> for Maybe<Label<D>>
+    where
+        D: Dimension
+{
+    fn from(text: &str) -> Self {
+        Maybe::Value(Label::new(text))
+    }
+}
+
+impl<D> GnuCommandFactory for Label<D>
+where
+    D: Dimension
+{
     fn as_commands(&self) -> VecDeque<GnuCommand> {
-        vec![
-            GnuCommand::new(format!("set ylabel \"{}\"", self.text))
-        ].into()
+        let command = GnuCommand::new(format!("set {}label \"{}\"", D::name(), self.text));
+        vec![command].into()
     }
 }
 
