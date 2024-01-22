@@ -6,15 +6,13 @@ pub enum Maybe<T> {
     Nothing
 }
 
-impl<T> Default for Maybe<T> {
-    fn default() -> Self {
-        Nothing
-    }
-}
-
 impl<T> Maybe<T> {
     pub fn value(value: T) -> Self {
         Maybe::Value(value)
+    }
+
+    pub fn update(&mut self, value: T) {
+        std::mem::swap(self, &mut Maybe::Value(value));
     }
 
     pub fn unwrap(self) -> T {
@@ -39,18 +37,33 @@ pub mod maybe_conversions {
     }
 }
 
+impl<T> Default for Maybe<T> {
+    fn default() -> Self {
+        Maybe::Nothing
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_maybe_default_is_nothing() {
-        assert_eq!(Maybe::default(), Maybe::<i32>::Nothing);
+    fn test_a_maybe_can_be_constructed() {
+        assert_eq!(Maybe::value(1), Maybe::Value(1));
     }
 
     #[test]
-    fn test_a_maybe_can_be_constructed() {
-        assert_eq!(Maybe::value(1), Maybe::Value(1));
+    fn test_an_empty_maybe_can_be_updated() {
+        let mut maybe: Maybe<i32> = Maybe::Nothing;
+        maybe.update(123);
+        assert_eq!(maybe, Maybe::Value(123));
+    }
+
+    #[test]
+    fn test_a_maybe_can_be_updated(){
+        let mut maybe: Maybe<i32> = Maybe::value(123);
+        maybe.update(456);
+        assert_eq!(maybe, Maybe::Value(456));
     }
 
     mod conversions {

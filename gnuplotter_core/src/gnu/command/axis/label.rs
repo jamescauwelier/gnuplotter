@@ -28,32 +28,34 @@ where
     }
 }
 
+impl<D> From<&str> for Label<D>
+where
+    D: Dimension
+{
+    fn from(value: &str) -> Self {
+        Label::new(value)
+    }
+}
+
 impl<D> From<Label<D>> for Maybe<Label<D>>
 where
     D: Dimension
 {
+    fn from(value: Label<D>) -> Self {
+        Maybe::Value(value)
+    }
+}
+
+impl<D> From<Label<D>> for Required<Label<D>>
+    where
+        D: Dimension
+{
     fn from(label: Label<D>) -> Self {
-        Maybe::Value(label)
+        Required::value(label)
     }
 }
 
-impl<D> From<&str> for Required<Label<D>>
-    where
-        D: Dimension
-{
-    fn from(text: &str) -> Self {
-        Required::Value(Label::new(text))
-    }
-}
 
-impl<D> From<&str> for Maybe<Label<D>>
-    where
-        D: Dimension
-{
-    fn from(text: &str) -> Self {
-        Maybe::Value(Label::new(text))
-    }
-}
 
 impl<D> GnuCommandFactory for Label<D>
 where
@@ -116,7 +118,7 @@ mod tests {
     #[test]
     fn test_an_empty_maybe_label_has_no_label_information() {
         let label: Maybe<Label<X>> = Maybe::Nothing;
-        let mut commands = label.as_commands();
+        let commands = label.as_commands();
 
         assert_eq!(commands.len(), 0);
     }

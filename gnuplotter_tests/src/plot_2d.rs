@@ -3,13 +3,13 @@ use gnuplotter::prelude::*;
 use std::fmt::Debug;
 
 #[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
-pub struct XAxisWithRequiredLabel
+pub struct XAxis
 {
     label: Required<Label<X>>
 }
 
 #[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
-pub struct YAxisWithOptionalLabel
+pub struct YAxis
 {
     label: Maybe<Label<Y>>
 }
@@ -17,8 +17,8 @@ pub struct YAxisWithOptionalLabel
 #[derive(Clone, PartialEq, Eq, Debug, Default, Plot)]
 pub struct Plot2D {
     title: Maybe<Title>,
-    x: Required<Axis<X>>,
-    y: Required<Axis<Y>>,
+    x: XAxis,
+    y: YAxis,
 }
 
 impl Plot2D {
@@ -35,12 +35,12 @@ mod tests {
 
     #[test]
     fn test_axis_creation_with_optional_label(){
-        let mut axis = YAxisWithOptionalLabel::default();
+        let mut axis = YAxis::default();
         let commands = axis.as_commands();
 
         assert_eq!(commands.len(), 0);
 
-        axis.label("label y".into());
+        axis.label().update("label y".into());
         let commands = axis.as_commands();
 
         assert_eq!(commands.len(), 1);
@@ -49,17 +49,22 @@ mod tests {
     #[test]
     #[should_panic(expected = "A required value must be present before commands can be generated.")]
     fn test_axis_creation_with_required_label_requires_label(){
-        let axis = XAxisWithRequiredLabel::default();
+        let axis = XAxis::default();
         let _commands = axis.as_commands();
     }
 
     #[test]
     fn test_axis_creation_with_required_label(){
-        let mut axis = XAxisWithRequiredLabel::default();
-        axis.label("label x".into());
+        let mut axis = XAxis::default();
+        axis.label().update("label x".into());
         let commands = axis.as_commands();
 
         assert_eq!(commands.len(), 1);
+
+        axis.label().update("label x 2nd".into());
+        let mut commands = axis.as_commands();
+        let c: String = commands.pop_front().unwrap().into();
+        assert_eq!(c, "set xlabel \"label x 2nd\"");
     }
 
     #[test]
@@ -75,13 +80,13 @@ mod tests {
     fn test_plot_creation() {
         let mut plot = Plot2D::default();
 
-        assert_eq!(plot.title, Maybe::Nothing);
-        assert_eq!(plot.x, Required::Missing);
-        assert_eq!(plot.y, Required::Missing);
+        assert_eq!(plot.title(), &mut Maybe::Nothing);
+        assert_eq!(plot.x(), &mut XAxis::default());
+        assert_eq!(plot.y(), &mut YAxis::default());
 
-        plot.title("an experiment");
-        plot.x.label("label x");
-        plot.y.label("label y");
+        plot.title().update("an experiment".into());
+        plot.x.label().update("label x".into());
+        plot.y.label().update("label y".into());
 
         let commands = plot.as_commands();
 

@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{BufWriter, Error, Write};
 use std::process::{Child, Command, Stdio};
+use std::ptr::write;
 use tempfile::tempfile;
 
 pub struct PlotError(String);
@@ -61,8 +62,9 @@ impl Plot {
 
         writeln!(stdin, "set title '{}'", "an experiment")?;
         writeln!(stdin, "clear")?;
-        writeln!(stdin, "set term pngcairo font \"Arial,12\"")?;
-        writeln!(stdin, "set term pngcairo")?;
+        writeln!(stdin, "set term pngcairo font \"Helvetica,14\" size 600,400")?;
+        // writeln!(stdin, "set term pngcairo")?;
+        writeln!(stdin, "set tics font \"Helvetica,8\"")?;
         writeln!(stdin, "set output './tmp/output.png'")?;
         writeln!(stdin, "set multiplot")?;
         writeln!(stdin, "set xr [1:10]")?;

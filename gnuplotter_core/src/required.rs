@@ -1,18 +1,22 @@
+use crate::prelude::{Dimension, Label};
+
 #[derive(Debug, PartialEq, Clone, Eq)]
 pub enum Required<T> {
     Missing,
     Value(T)
 }
 
-impl<T> Default for Required<T> {
-    fn default() -> Self {
+impl<T> Required<T> {
+    pub fn missing() -> Self {
         Required::Missing
     }
-}
 
-impl<T> Required<T> {
     pub fn value(value: T) -> Self {
         Required::Value(value)
+    }
+
+    pub fn update(&mut self, value: T) {
+        std::mem::swap(self, &mut Required::value(value));
     }
 
     pub fn unwrap(self) -> T {
@@ -39,20 +43,36 @@ pub mod required_conversions {
         T: From<&'a str>
     {
         fn from(value: &'a str) -> Self {
-            Required::Value(T::from(value))
+            Required::value(T::from(value))
         }
+    }
+}
+
+impl<T> Default for Required<T> {
+    fn default() -> Self {
+        Required::missing()
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
 
     #[test]
     fn test_required_is_default_missing() {
-        use super::*;
-
-        let required: Required<i32> = Required::default();
+        let required: Required<i32> = Required::missing();
         assert_eq!(required, Required::Missing);
+    }
+
+    #[test]
+    fn test_updating_values(){
+        let mut required: Required<i32> = Required::missing();
+        required.update(123);
+        assert_eq!(required, Required::Value(123));
+
+        let mut required: Required<i32> = Required::value(123);
+        required.update(456);
+        assert_eq!(required, Required::Value(456));
     }
 
     mod conversions {

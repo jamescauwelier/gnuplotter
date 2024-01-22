@@ -2,6 +2,7 @@
 #![allow(dead_code, unused_imports)]
 
 pub(crate) mod axis;
+mod plot;
 
 #[macro_use]
 extern crate derive_builder;
@@ -11,12 +12,10 @@ use std::any::Any;
 use quote::{format_ident, quote, TokenStreamExt};
 use syn::{parse_macro_input, DeriveInput, Attribute};
 use crate::axis::create_axis_expansions;
-// use gnuplotter_core::derive::axis::create_axis_expansions;
 
 #[proc_macro_derive(Axis)]
 pub fn derive_axis(input:TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    // dbg!(&input);
 
     create_axis_expansions(input)
 }
@@ -51,19 +50,15 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
 
                 definitions = quote!{
                     #definitions
-                    fn #field_name<T>(&mut self, value: T) -> &mut Self
-                        where #field_type: From<T>;
+                    fn #field_name(&mut self) -> &mut #field_type;
                 };
 
                 implementations = quote! {
                     #implementations
 
-                    fn #field_name<T>(&mut self, value: T) -> &mut Self
-                    where
-                        #field_type: From<T>
+                    fn #field_name(&mut self) -> &mut #field_type
                     {
-                        self.#field_name = value.into();
-                        self
+                        &mut self.#field_name
                     }
                 };
             }

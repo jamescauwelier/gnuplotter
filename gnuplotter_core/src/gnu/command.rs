@@ -14,6 +14,12 @@ pub mod prelude {
 
 pub struct GnuCommand(String);
 
+impl From<GnuCommand> for String {
+    fn from(command: GnuCommand) -> Self {
+        command.0
+    }
+}
+
 impl GnuCommand {
     pub(crate) fn new(command: String) -> Self {
         GnuCommand(command)

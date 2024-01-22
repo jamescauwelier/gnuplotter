@@ -1,9 +1,9 @@
 use proc_macro::TokenStream;
+use proc_macro::TokenTree::Punct;
 use proc_macro2::{TokenStream as TokenStream2, TokenTree};
 
 use std::any::Any;
 use std::collections::HashSet;
-// use std::any::Any;
 use syn::{DeriveInput, Type, WherePredicate};
 use quote::{format_ident, quote, ToTokens};
 use syn::punctuated::Punctuated;
@@ -44,6 +44,27 @@ fn extract_command(stream: TokenStream2) -> Option<Command> {
     None
 }
 
+fn chained_type_notation(stream: TokenStream2) -> TokenStream2 {
+    let mut s = String::new();
+    for token in stream {
+        match token {
+            TokenTree::Ident(ident) => {
+                s += &ident.to_string();
+            },
+            TokenTree::Punct(punct) => {
+                match punct.as_char() {
+                    '<' => s += "::<",
+                    '>' => s += ">",
+                    _ => {}
+                }
+            },
+            _ => { }
+        };
+    }
+
+    s.parse().unwrap()
+}
+
 fn struct_fields(input: &DeriveInput) -> Vec<(syn::Ident, syn::Type, Command)> {
     match &input.data {
         syn::Data::Struct(s) => {
@@ -51,7 +72,7 @@ fn struct_fields(input: &DeriveInput) -> Vec<(syn::Ident, syn::Type, Command)> {
             for field in s.fields.clone().into_iter() {
                 let field_name = field.ident.unwrap();
                 if let Some(field_type_command) = extract_command(field.ty.clone().into_token_stream()) {
-                    fields.push((field_name, field.ty, field_type_command));
+                    fields.push((field_name, field.ty.clone(), field_type_command));
                 }
 
             }
@@ -89,15 +110,14 @@ pub fn create_axis_expansions(input: DeriveInput) -> TokenStream {
             println!("Adding setter for field: {}", field_name);
             trait_methods = quote! {
                 #trait_methods
-                fn #field_name(&mut self, value: #field_type);
+                fn #field_name(&mut self) -> &mut #field_type;
             };
             trait_method_implementations = quote! {
                 #trait_method_implementations
-                fn #field_name(&mut self, value: #field_type) {
-                    self.#field_name = value;
+                fn #field_name(&mut self) -> &mut #field_type {
+                    &mut self.#field_name
                 }
             };
-            continue;
         } else {
             println!("Skipping setter for field: {}, of type: {:?}", field_name, field_type_command);
         }
@@ -150,4 +170,17 @@ pub fn create_axis_expansions(input: DeriveInput) -> TokenStream {
             #axis_impl
         }
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_chaining_types() {
+        let something = quote!(Required<Label<X>>);
+        let chained = chained_type_notation(something).to_string();
+
+        assert_eq!(chained, "Required ::< Label ::< X >>");
+    }
 }
