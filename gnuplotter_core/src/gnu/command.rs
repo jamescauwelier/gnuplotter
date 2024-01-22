@@ -21,8 +21,11 @@ impl From<GnuCommand> for String {
 }
 
 impl GnuCommand {
-    pub(crate) fn new(command: String) -> Self {
-        GnuCommand(command)
+    pub(crate) fn new<T>(command: T) -> Self
+    where
+        String: From<T>
+    {
+        GnuCommand(command.into())
     }
 }
 

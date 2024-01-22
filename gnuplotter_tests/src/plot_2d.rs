@@ -14,11 +14,13 @@ pub struct YAxis
     label: Maybe<Label<Y>>
 }
 
-#[derive(Clone, PartialEq, Eq, Debug, Default, Plot)]
+#[derive(Clone, PartialEq, Debug, Default, Plot)]
 pub struct Plot2D {
     title: Maybe<Title>,
     x: XAxis,
     y: YAxis,
+    linear_series: VectorDataSource,
+    exponential_series: VectorDataSource
 }
 
 impl Plot2D {
@@ -87,6 +89,21 @@ mod tests {
         plot.title().update("an experiment".into());
         plot.x.label().update("label x".into());
         plot.y.label().update("label y".into());
+
+        let commands = plot.as_commands();
+
+        assert_eq!(commands.len(), 5);
+    }
+
+    #[test]
+    fn test_plotting_linear_and_exponential_series() {
+        let mut plot = Plot2D::default();
+        plot.x.label().update("label x".into());
+
+        for i in 0..10 {
+            plot.linear_series.add(i as f64);
+            plot.exponential_series.add((i*i) as f64);
+        }
 
         let commands = plot.as_commands();
 

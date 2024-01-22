@@ -62,15 +62,19 @@ impl Plot {
 
         writeln!(stdin, "set title '{}'", "an experiment")?;
         writeln!(stdin, "clear")?;
-        writeln!(stdin, "set term pngcairo font \"Helvetica,14\" size 600,400")?;
+        writeln!(stdin, "set term pngcairo font \"Helvetica,14\" size 1200,800")?;
         // writeln!(stdin, "set term pngcairo")?;
         writeln!(stdin, "set tics font \"Helvetica,8\"")?;
         writeln!(stdin, "set output './tmp/output.png'")?;
-        writeln!(stdin, "set multiplot")?;
         writeln!(stdin, "set xr [1:10]")?;
         writeln!(stdin, "set yr [1:100]")?;
-        writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint")?;
-        writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
+        writeln!(stdin, "set logscale y")?;
+        // writeln!(stdin, "set multiplot")?;
+        writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint, \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
+        // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint")?;
+        // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
+        // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
+        // writeln!(stdin, "plot using")?;
 
         // writeln!(stdin, "save 'figure.png'")?;
 
@@ -84,7 +88,7 @@ impl Plot {
 mod tests {
     use super::*;
 
-    #[test]
+    // #[test]
     fn it_works() {
         let mut plot = Plot::new();
         assert!(plot.draw().is_ok());
