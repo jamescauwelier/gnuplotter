@@ -45,7 +45,9 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
 
                 command_appenders = quote!{
                     #command_appenders
-                    commands.append(&mut self.#field_name.as_commands());
+                    if let Ok(mut new_commands) = GnuCommandFactory::as_commands(&self.#field_name) {
+                        commands.append(&mut new_commands);
+                    }
                 };
 
                 definitions = quote!{
@@ -95,11 +97,11 @@ pub fn derive_plot(input: TokenStream) -> TokenStream {
         }
 
         impl GnuCommandFactory for #name {
-            fn as_commands(&self) -> VecDeque<GnuCommand> {
+            fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
                 let mut commands = VecDeque::new();
                 #command_appenders
 
-                commands
+                Ok(commands)
             }
         }
     };

@@ -146,18 +146,20 @@ pub fn create_axis_expansions(input: DeriveInput) -> TokenStream {
         println!("Adding appender for field: {}", field_name);
         command_factory_combiner = quote!{
             #command_factory_combiner
-            commands.append(&mut self.#field_name.as_commands());
+            if let Ok(mut new_commands) = GnuCommandFactory::as_commands(&self.#field_name) {
+                commands.append(&mut new_commands);
+            }
         };
     }
 
     println!("Implementing GnuCommandFactory for {}", name);
     let command_factory_impl = quote! {
         impl #generics_info  GnuCommandFactory for #name #generics_info #where_info {
-            fn as_commands(&self) -> VecDeque<GnuCommand> {
+            fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
                 let mut commands = VecDeque::new();
                 #command_factory_combiner
 
-                commands
+                Ok(commands)
             }
         }
     };

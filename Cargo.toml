@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["gnuplotter", "gnuplotter_core",
+members = [ "gnuplotter", "gnuplotter_core",
     "gnuplotter_macros", "gnuplotter_tests",
 ]
 

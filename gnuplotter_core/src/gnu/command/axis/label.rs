@@ -61,9 +61,11 @@ impl<D> GnuCommandFactory for Label<D>
 where
     D: Dimension
 {
-    fn as_commands(&self) -> VecDeque<GnuCommand> {
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
         let command = GnuCommand::new(format!("set {}label \"{}\"", D::name(), self.text));
-        vec![command].into()
+        Ok(
+            vec![command].into()
+        )
     }
 }
 
@@ -100,7 +102,7 @@ mod tests {
     #[test]
     fn test_a_label_has_label_information() {
         let label: Label<X> = Label::new("x");
-        let mut commands = label.as_commands();
+        let mut commands = label.as_commands().unwrap();
 
         assert_eq!(commands.len(), 1);
         assert_eq!(commands.pop_front().unwrap().0, "set xlabel \"x\"");
@@ -109,7 +111,7 @@ mod tests {
     #[test]
     fn test_a_maybe_label_has_label_information() {
         let label: Maybe<Label<X>> = Maybe::value(Label::from("x"));
-        let mut commands = label.as_commands();
+        let mut commands = label.as_commands().unwrap();
 
         assert_eq!(commands.len(), 1);
         assert_eq!(commands.pop_front().unwrap().0, "set xlabel \"x\"");
@@ -118,7 +120,7 @@ mod tests {
     #[test]
     fn test_an_empty_maybe_label_has_no_label_information() {
         let label: Maybe<Label<X>> = Maybe::Nothing;
-        let commands = label.as_commands();
+        let commands = label.as_commands().unwrap();
 
         assert_eq!(commands.len(), 0);
     }
@@ -126,7 +128,7 @@ mod tests {
     #[test]
     fn test_a_required_label_has_label_information() {
         let label: Required<Label<Y>> = Required::value(Label::from("y"));
-        let mut commands = label.as_commands();
+        let mut commands = label.as_commands().unwrap();
 
         assert_eq!(commands.len(), 1);
         assert_eq!(commands.pop_front().unwrap().0, "set ylabel \"y\"");
@@ -136,7 +138,7 @@ mod tests {
     #[should_panic(expected = "A required value must be present before commands can be generated.")]
     fn test_a_missing_required_label_has_no_label_information() {
         let label: Required<Label<X>> = Required::Missing;
-        let commands = label.as_commands();
+        let commands = label.as_commands().unwrap();
 
         assert_eq!(commands.len(), 0);
     }

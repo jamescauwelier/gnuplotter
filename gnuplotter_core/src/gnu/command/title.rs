@@ -12,8 +12,8 @@ impl Title {
 }
 
 impl GnuCommandFactory for Title {
-    fn as_commands(&self) -> VecDeque<GnuCommand> {
-        vec![GnuCommand(format!("set title '{}'", self.0))].into()
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+        Ok(vec![GnuCommand(format!("set title '{}'", self.0))].into())
     }
 }
 

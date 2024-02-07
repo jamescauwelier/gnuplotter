@@ -1,6 +1,9 @@
 use std::collections::VecDeque;
+use std::fs::File;
+use std::io::{Error, Write};
 use crate::gnu::data::source::DataSource;
 use crate::prelude::{GnuCommand, GnuCommandFactory};
+use crate::result::*;
 
 #[derive(Default, PartialEq, Debug, Clone)]
 pub struct VectorDataSource {
@@ -47,11 +50,26 @@ impl Iterator for VectorDataSourceIterator {
 }
 
 impl GnuCommandFactory for VectorDataSource {
-    fn as_commands(&self) -> VecDeque<GnuCommand> {
-        // todo!("Write out data into a file?")
-        vec![
-            GnuCommand::new("some command")
-        ].into()
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+        match File::create("data.txt") {
+            Ok(mut file) => {
+
+                for i in 0..self.data.len() {
+                    if let Err(_) = write!(&mut file, "{}\t{}\n", i, self.data[i]) {
+                        return Err("Unable to write data to file.".into());
+                    }
+                }
+
+                Ok(
+                    vec![
+                        GnuCommand::new("some command")
+                    ].into()
+                )
+            },
+            Err(_) => {
+                Err("Unable to write data to file.".into())
+            }
+        }
     }
 }
 

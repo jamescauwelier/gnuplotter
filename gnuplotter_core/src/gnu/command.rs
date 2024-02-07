@@ -12,6 +12,7 @@ pub mod prelude {
     pub use super::*;
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct GnuCommand(String);
 
 impl From<GnuCommand> for String {
@@ -30,14 +31,14 @@ impl GnuCommand {
 }
 
 pub trait GnuCommandFactory {
-    fn as_commands(&self) -> VecDeque<GnuCommand>;
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>>;
 }
 
 impl<T> GnuCommandFactory for Required<T>
 where
     T: GnuCommandFactory
 {
-    fn as_commands(&self) -> VecDeque<GnuCommand> {
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
         match self {
             Required::Missing => panic!("A required value must be present before commands can be generated."),
             Required::Value(value) => value.as_commands()
@@ -49,9 +50,9 @@ impl<T> GnuCommandFactory for Maybe<T>
     where
         T: GnuCommandFactory
 {
-    fn as_commands(&self) -> VecDeque<GnuCommand> {
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
         match self {
-            Maybe::Nothing => vec![].into(),
+            Maybe::Nothing => Ok(vec![].into()),
             Maybe::Value(value) => value.as_commands()
         }
     }
