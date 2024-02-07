@@ -26,6 +26,12 @@ impl Plot2D {
     pub fn new() -> Self {
         Plot2D::default()
     }
+    
+    // pub fn save(&self, filename: &str) -> Result<String> {
+    //     let mut commands = vec![
+    //         GnuCommand::new("set term pngcairo font \"Helvetica,14\" size 1200,800"),
+    //     ]
+    // }
 }
 
 

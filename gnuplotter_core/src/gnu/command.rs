@@ -4,6 +4,7 @@ use crate::prelude::*;
 
 pub mod title;
 pub mod axis;
+mod config;
 
 pub mod prelude {
     pub use super::title::*;
