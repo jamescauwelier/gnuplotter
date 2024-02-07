@@ -1,6 +1,6 @@
 # Project level ReadMe
 
-![Test](https://github.com/jamescauwelier/gnuplotter/actions/workflows/build-and-test.yml/badge.svg)
+![Test](https://github.com/jamescauwelier/gnuplotter/actions/workflows/build_and_test.yml/badge.svg)
 
 # Resources
 
