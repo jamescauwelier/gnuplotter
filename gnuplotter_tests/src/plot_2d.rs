@@ -91,7 +91,7 @@ mod tests {
 
         let commands = plot.as_commands().unwrap();
 
-        assert_eq!(commands.len(), 5);
+        assert_eq!(commands.len(), 3);
     }
 
     #[test]
@@ -99,7 +99,7 @@ mod tests {
         let mut plot = Plot2D::default();
         plot.x.label().update("label x".into());
 
-        let mut linear_series = Serie::<f64>::new();
+        let mut linear_series = Serie::<f64>::with_title(Some("Linear data".into()));
         let mut exponential_series = Serie::<f64>::new();
         for i in 0..10 {
             linear_series.add(i as f64);
@@ -108,8 +108,10 @@ mod tests {
         plot.series.add(linear_series);
         plot.series.add(exponential_series);
 
-        let commands = plot.as_commands().unwrap();
+        let mut commands = plot.as_commands().unwrap();
+        let _first = commands.pop_front();
+        let second = commands.pop_front().unwrap().to_string();
 
-        assert_eq!(commands.len(), 3);
+        assert_eq!(second, "plot \"./.tmp/series_data.txt\" using 1:2 title 'Linear data' with linespoint, \"./.tmp/series_data.txt\" using 1:3 with linespoint");
     }
 }

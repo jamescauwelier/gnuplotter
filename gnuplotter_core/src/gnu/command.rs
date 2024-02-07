@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::fmt::Display;
 use crate::prelude::*;
 
 pub mod title;
@@ -14,6 +15,12 @@ pub mod prelude {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct GnuCommand(String);
+
+impl Display for GnuCommand {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0.clone())
+    }
+}
 
 impl From<GnuCommand> for String {
     fn from(command: GnuCommand) -> Self {

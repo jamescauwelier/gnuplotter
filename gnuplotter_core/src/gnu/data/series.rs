@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::fs;
 use std::fs::File;
 use std::io::Write;
 use rand::random;
@@ -101,10 +102,12 @@ where
 {
     fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
 
-        let filename = "./series_data.txt";
+        use std::fs;
+        let _ = fs::create_dir(".tmp");
+
+        let filename = "./.tmp/series_data.txt";
         self.write_to_file(filename)?;
 
-        // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint, \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
         let mut command = "plot ".to_string();
         for i in 0..self.data.len() {
             if let Some(title) = self.data[i].title() {
@@ -198,7 +201,7 @@ mod tests {
 
         let mut command = series.as_commands().unwrap();
 
-        assert_eq!(command.pop_front().unwrap(), GnuCommand::new("plot \"./series_data.txt\" using 1:2 title 'A' with linespoint, \"./series_data.txt\" using 1:3 title 'B' with linespoint"));
+        assert_eq!(command.pop_front().unwrap(), GnuCommand::new("plot \"./.tmp/series_data.txt\" using 1:2 title 'A' with linespoint, \"./.tmp/series_data.txt\" using 1:3 title 'B' with linespoint"));
     }
 
     #[test]
@@ -219,6 +222,6 @@ mod tests {
 
         let mut command = series.as_commands().unwrap();
 
-        assert_eq!(command.pop_front().unwrap(), GnuCommand::new("plot \"./series_data.txt\" using 1:2 with linespoint, \"./series_data.txt\" using 1:3 with linespoint"));
+        assert_eq!(command.pop_front().unwrap(), GnuCommand::new("plot \"./.tmp/series_data.txt\" using 1:2 with linespoint, \"./.tmp/series_data.txt\" using 1:3 with linespoint"));
     }
 }
