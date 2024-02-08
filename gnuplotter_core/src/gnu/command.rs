@@ -4,12 +4,14 @@ use crate::prelude::*;
 
 pub mod title;
 pub mod axis;
-mod config;
+pub mod config;
 
 pub mod prelude {
     pub use super::title::*;
     pub use super::axis::*;
     pub use super::axis::label::*;
+    pub use super::config::*;
+    pub use super::config::terminal::*;
 
     pub use super::*;
 }

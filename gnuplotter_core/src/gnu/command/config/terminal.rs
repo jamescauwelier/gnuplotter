@@ -75,12 +75,22 @@ pub struct PngCairo {
     font: PngCairoFont
 }
 
+impl PngCairo {
+    pub fn font(&mut self) -> &mut PngCairoFont {
+        &mut self.font
+    }
+
+    pub fn size(&mut self) -> &mut PngCairoSize {
+        &mut self.size
+    }
+}
+
 impl Terminal for PngCairo {}
 
 impl GnuCommandFactory for PngCairo {
     fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
         Ok(vec![
-            GnuCommand::new(format!("set term pngcairo enhanced {} {}", self.size, self.font))
+            GnuCommand::new(format!("set term pngcairo enhanced {} {}", self.size, self.font).trim())
         ].into())
     }
 }
@@ -92,11 +102,20 @@ mod tests {
     #[test]
     fn test_png_cairo_terminal_creation() {
         let mut terminal = PngCairo::default();
-        terminal.font.update("Helvetica", 14);
-        terminal.size.update(1200, 800);
+        terminal.font().update("Helvetica", 14);
+        terminal.size().update(1200, 800);
         let commands = terminal.as_commands().unwrap();
 
         assert_eq!(commands.len(), 1);
         assert_eq!(commands[0].to_string(), "set term pngcairo enhanced size 1200,800 font \"Helvetica,14\"");
+    }
+
+    #[test]
+    fn test_png_cairo_terminal_empty_creation() {
+        let terminal = PngCairo::default();
+        let commands = terminal.as_commands().unwrap();
+
+        assert_eq!(commands.len(), 1);
+        assert_eq!(commands[0].to_string(), "set term pngcairo enhanced");
     }
 }

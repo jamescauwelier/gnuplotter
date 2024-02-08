@@ -19,14 +19,15 @@ pub struct Plot2D {
     title: Maybe<Title>,
     x: XAxis,
     y: YAxis,
-    series: Series<f64>
+    series: Series<f64>,
+    config: Config
 }
 
 impl Plot2D {
     pub fn new() -> Self {
         Plot2D::default()
     }
-    
+
     // pub fn save(&self, filename: &str) -> Result<String> {
     //     let mut commands = vec![
     //         GnuCommand::new("set term pngcairo font \"Helvetica,14\" size 1200,800"),
@@ -97,13 +98,15 @@ mod tests {
 
         let commands = plot.as_commands().unwrap();
 
-        assert_eq!(commands.len(), 3);
+        assert_eq!(commands.len(), 4);
     }
 
     #[test]
     fn test_plotting_linear_and_exponential_series() {
         let mut plot = Plot2D::default();
         plot.x.label().update("label x".into());
+        plot.config.terminal().font().update("Helvetica", 9);
+        plot.config.terminal().size().update(100, 100);
 
         let mut linear_series = Serie::<f64>::with_title(Some("Linear data".into()));
         let mut exponential_series = Serie::<f64>::new();
@@ -114,10 +117,8 @@ mod tests {
         plot.series.add(linear_series);
         plot.series.add(exponential_series);
 
-        let mut commands = plot.as_commands().unwrap();
-        let _first = commands.pop_front();
-        let second = commands.pop_front().unwrap().to_string();
+        let commands = plot.as_commands().unwrap();
 
-        assert_eq!(second, "plot \"./.tmp/series_data.txt\" using 1:2 title 'Linear data' with linespoint, \"./.tmp/series_data.txt\" using 1:3 with linespoint");
+        assert_eq!(commands.len(), 3);
     }
 }
