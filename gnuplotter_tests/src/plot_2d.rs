@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 use gnuplotter::prelude::*;
 use std::fmt::Debug;
+use gnuplotter::prelude::filename::Filename;
 
 #[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
 pub struct XAxis
@@ -16,11 +17,11 @@ pub struct YAxis
 
 #[derive(Clone, PartialEq, Debug, Default, Plot)]
 pub struct Plot2D {
+    config: Config,
     title: Maybe<Title>,
     x: XAxis,
     y: YAxis,
     series: Series<f64>,
-    config: Config
 }
 
 impl Plot2D {
@@ -28,11 +29,12 @@ impl Plot2D {
         Plot2D::default()
     }
 
-    // pub fn save(&self, filename: &str) -> Result<String> {
-    //     let mut commands = vec![
-    //         GnuCommand::new("set term pngcairo font \"Helvetica,14\" size 1200,800"),
-    //     ]
-    // }
+    pub fn render(&self) -> Result<()> {
+        let commands = self.as_commands()?;
+        Render::render(commands)?;
+        
+        Ok(())
+    }
 }
 
 
@@ -78,7 +80,8 @@ mod tests {
     #[test]
     #[should_panic(expected = "A required value must be present before commands can be generated.")]
     fn test_an_axis_requires_a_label(){
-        let plot = Plot2D::default();
+        let mut plot = Plot2D::default();
+        plot.config.terminal().output().update("abc");
         let commands = plot.as_commands().unwrap();
 
         assert_eq!(commands.len(), 3);
@@ -106,6 +109,7 @@ mod tests {
     fn test_plotting_linear_and_exponential_series() {
         let mut plot = Plot2D::default();
         plot.x.label().update("label x".into());
+        plot.config.terminal().output().update("plot.png");
         plot.config.terminal().font().update("Helvetica", 9);
         plot.config.terminal().size().update(100, 100);
 
@@ -120,6 +124,31 @@ mod tests {
 
         let commands = plot.as_commands().unwrap();
 
-        assert_eq!(commands.len(), 3);
+        assert_eq!(commands.len(), 4);
+    }
+
+    #[test]
+    fn test_rendering_a_plot() {
+
+        // creates the plot
+        let mut plot = Plot2D::default();
+        plot.x.label().update("X".into());
+        plot.y.label().update("Y".into());
+        plot.config.terminal().output().update("./.tmp/plot.png");
+
+        // adds the data
+        let mut linear_series = Serie::<f64>::with_title(Some("Linear data".into()));
+        let mut exponential_series = Serie::<f64>::new();
+        for i in 0..10 {
+            linear_series.add(i as f64);
+            exponential_series.add((i*i) as f64);
+        }
+        plot.series.add(linear_series);
+        plot.series.add(exponential_series);
+
+        // renders it
+        let result = plot.render();
+
+        assert!(result.is_ok());
     }
 }

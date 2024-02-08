@@ -85,7 +85,8 @@ impl PngCairoOutput {
 impl GnuCommandFactory for PngCairoOutput {
     fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
         match self {
-            PngCairoOutput::Missing => Ok(vec![].into()),
+            PngCairoOutput::Missing =>
+                panic!("PNGCairo requires an output file: TERMINAL.output().update(\"./filename.png\")"),
             PngCairoOutput::Filename(filename) => {
                 Ok(vec![GnuCommand::new(format!("set output '{}'", filename))].into())
             }
@@ -124,6 +125,7 @@ impl GnuCommandFactory for PngCairo {
             GnuCommand::new(format!("set term pngcairo enhanced {} {}", self.size, self.font).trim())
         );
 
+
         Ok(commands)
     }
 }
@@ -147,10 +149,23 @@ mod tests {
 
     #[test]
     fn test_png_cairo_terminal_empty_creation() {
+        let mut terminal = PngCairo::default();
+        terminal.output().update("./result.png");
+        let commands = terminal.as_commands().unwrap();
+
+        assert_eq!(commands.len(), 2);
+        assert_eq!(commands[0].to_string(), "set output './result.png'");
+        assert_eq!(commands[1].to_string(), "set term pngcairo enhanced");
+    }
+
+    #[test]
+    #[should_panic(expected = "PNGCairo requires an output file: TERMINAL.output().update(\"./filename.png\")")]
+    fn test_png_cairo_terminal_creation_without_filename_panics() {
         let terminal = PngCairo::default();
         let commands = terminal.as_commands().unwrap();
 
-        assert_eq!(commands.len(), 1);
-        assert_eq!(commands[0].to_string(), "set term pngcairo enhanced");
+        assert_eq!(commands.len(), 2);
+        assert_eq!(commands[0].to_string(), "set output './result.png'");
+        assert_eq!(commands[1].to_string(), "set term pngcairo enhanced");
     }
 }

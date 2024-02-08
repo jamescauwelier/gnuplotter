@@ -17,3 +17,5 @@ quote = "1.0.35"
 syn = { version = "2.0.48", features = ["derive", "parsing", "printing", "clone-impls", "extra-traits", "proc-macro"] }
 tempfile = "3.9.0"
 proc-macro2 = "1.0.76"
+png = "0.17.11"
+term = "0.7.0"

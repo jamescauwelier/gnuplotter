@@ -12,6 +12,7 @@ pub mod prelude {
     pub use super::axis::label::*;
     pub use super::config::*;
     pub use super::config::terminal::*;
+    pub use super::config::filename::*;
 
     pub use super::*;
 }

@@ -113,7 +113,7 @@ where
             if let Some(title) = self.data[i].title() {
                 command += &format!("\"{}\" using 1:{} title '{}' with linespoint, ", filename, i + 2, title);
             } else {
-                command += &format!("\"{}\" using 1:{} with linespoint, ", filename, i + 2);
+                command += &format!("\"{}\" using 1:{} title '' with linespoint, ", filename, i + 2);
             }
         }
         let command = command.strip_suffix(", ").ok_or("Unable to strip suffix")?;
@@ -222,6 +222,6 @@ mod tests {
 
         let mut command = series.as_commands().unwrap();
 
-        assert_eq!(command.pop_front().unwrap(), GnuCommand::new("plot \"./.tmp/series_data.txt\" using 1:2 with linespoint, \"./.tmp/series_data.txt\" using 1:3 with linespoint"));
+        assert_eq!(command.pop_front().unwrap(), GnuCommand::new("plot \"./.tmp/series_data.txt\" using 1:2 title '' with linespoint, \"./.tmp/series_data.txt\" using 1:3 title '' with linespoint"));
     }
 }

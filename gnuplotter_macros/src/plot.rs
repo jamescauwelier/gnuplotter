@@ -60,21 +60,37 @@ impl Plot {
         self.gnu = plot;
         let stdin = self.gnu.as_mut().unwrap().stdin.as_mut().expect("Failed to access STDIN for GnuPlot");
 
-        writeln!(stdin, "set title '{}'", "an experiment")?;
-        writeln!(stdin, "clear")?;
-        writeln!(stdin, "set term pngcairo font \"Helvetica,14\" size 1200,800")?;
+            // writeln!(stdin, "set title '{}'", "an experiment")?;
+        // writeln!(stdin, "clear")?;
+        //     writeln!(stdin, "set term pngcairo font \"Helvetica,14\" size 1200,800")?;
         // writeln!(stdin, "set term pngcairo")?;
-        writeln!(stdin, "set tics font \"Helvetica,8\"")?;
-        writeln!(stdin, "set output './tmp/output.png'")?;
-        writeln!(stdin, "set xr [1:10]")?;
-        writeln!(stdin, "set yr [1:100]")?;
-        writeln!(stdin, "set logscale y")?;
+        //     writeln!(stdin, "set tics font \"Helvetica,8\"")?;
+        //     writeln!(stdin, "set output './tmp/output.png'")?;
+        //     writeln!(stdin, "set xr [1:10]")?;
+        //     writeln!(stdin, "set yr [1:100]")?;
+        //     writeln!(stdin, "set logscale y")?;
         // writeln!(stdin, "set multiplot")?;
-        writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint, \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
+        //     writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint, \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
         // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:2 title 'A' with linespoint")?;
         // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
         // writeln!(stdin, "plot \"./tmp/data.1.txt\" using 1:3 title 'B' with linespoint")?;
         // writeln!(stdin, "plot using")?;
+
+
+        writeln!(stdin, "clear")?;
+
+        writeln!(stdin, "set output 'plot.png'")?;
+        writeln!(stdin, "set term pngcairo enhanced")?;
+
+        writeln!(stdin, "set xlabel \"X\"")?;
+        writeln!(stdin, "set ylabel \"Y\"")?;
+        writeln!(stdin, "plot \"./.tmp/series_data.txt\" using 1:2 title 'Linear data' with linespoint, \"./.tmp/series_data.txt\" using 1:3 with linespoint")?;
+
+
+
+
+
+
 
         // writeln!(stdin, "save 'figure.png'")?;
 

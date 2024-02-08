@@ -17,5 +17,6 @@ pub mod prelude {
     pub use super::gnu::data::source::vector_data_source::*;
     pub use super::gnu::data::serie::*;
     pub use super::gnu::data::series::*;
+    pub use super::gnu::render::*;
     pub use super::result::*;
 }
