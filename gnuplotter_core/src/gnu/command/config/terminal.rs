@@ -69,10 +69,35 @@ impl Display for PngCairoSize {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Default)]
+pub enum PngCairoOutput {
+    #[default]
+    Missing,
+    Filename(String)
+}
+
+impl PngCairoOutput {
+    pub fn update(&mut self, filename: &str) {
+        std::mem::swap(self, &mut PngCairoOutput::Filename(filename.into()))
+    }
+}
+
+impl GnuCommandFactory for PngCairoOutput {
+    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+        match self {
+            PngCairoOutput::Missing => Ok(vec![].into()),
+            PngCairoOutput::Filename(filename) => {
+                Ok(vec![GnuCommand::new(format!("set output '{}'", filename))].into())
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct PngCairo {
     size: PngCairoSize,
-    font: PngCairoFont
+    font: PngCairoFont,
+    output: PngCairoOutput
 }
 
 impl PngCairo {
@@ -83,15 +108,23 @@ impl PngCairo {
     pub fn size(&mut self) -> &mut PngCairoSize {
         &mut self.size
     }
+
+    pub fn output(&mut self) -> &mut PngCairoOutput {
+        &mut self.output
+    }
 }
 
 impl Terminal for PngCairo {}
 
 impl GnuCommandFactory for PngCairo {
     fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
-        Ok(vec![
+        let mut commands = VecDeque::new();
+        commands.append(&mut self.output.as_commands()?);
+        commands.push_back(
             GnuCommand::new(format!("set term pngcairo enhanced {} {}", self.size, self.font).trim())
-        ].into())
+        );
+
+        Ok(commands)
     }
 }
 
@@ -104,10 +137,12 @@ mod tests {
         let mut terminal = PngCairo::default();
         terminal.font().update("Helvetica", 14);
         terminal.size().update(1200, 800);
+        terminal.output().update("./result.png");
         let commands = terminal.as_commands().unwrap();
 
-        assert_eq!(commands.len(), 1);
-        assert_eq!(commands[0].to_string(), "set term pngcairo enhanced size 1200,800 font \"Helvetica,14\"");
+        assert_eq!(commands.len(), 2);
+        assert_eq!(commands[0].to_string(), "set output './result.png'");
+        assert_eq!(commands[1].to_string(), "set term pngcairo enhanced size 1200,800 font \"Helvetica,14\"");
     }
 
     #[test]

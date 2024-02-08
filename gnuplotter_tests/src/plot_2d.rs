@@ -95,10 +95,11 @@ mod tests {
         plot.title().update("an experiment".into());
         plot.x.label().update("label x".into());
         plot.y.label().update("label y".into());
+        plot.config.terminal().output().update("./plot.png");
 
         let commands = plot.as_commands().unwrap();
 
-        assert_eq!(commands.len(), 4);
+        assert_eq!(commands.len(), 5);
     }
 
     #[test]
