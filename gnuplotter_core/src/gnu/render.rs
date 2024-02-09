@@ -42,15 +42,10 @@ impl Render {
         writeln!(stdin, "clear").or(Err(RenderError::WritingCommandFailed))?;
         for command in commands {
             writeln!(stdin, "{}", command).or(Err(RenderError::WritingCommandFailed))?;
-            println!("{}", command);
         }
         writeln!(stdin, "exit").or(Err(RenderError::WritingCommandFailed))?;
 
-        // stdin.flush().or(Err(RenderError::CannotFlushSTDIN))?;
         gnu.wait().or(Err(RenderError::WaitingForGnuPlotFailed))?;
-
-
-
         gnu.kill().or(Err(RenderError::CouldNotKillGnuPlot))?;
 
         Ok(())
