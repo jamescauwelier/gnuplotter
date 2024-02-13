@@ -52,3 +52,11 @@ impl Render {
     }
 }
 
+pub trait CanRender: GnuCommandFactory {
+    fn render(&self) -> Result<()> {
+        let commands = self.as_commands()?;
+        Render::render(commands)?;
+
+        Ok(())
+    }
+}

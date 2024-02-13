@@ -1,7 +1,5 @@
-use std::marker::PhantomData;
 use gnuplotter::prelude::*;
 use std::fmt::Debug;
-use gnuplotter::prelude::filename::Filename;
 
 #[derive(Clone, PartialEq, Eq, Debug, Default, Axis)]
 pub struct XAxis
@@ -28,19 +26,11 @@ impl Plot2D {
     pub fn new() -> Self {
         Plot2D::default()
     }
-
-    pub fn render(&self) -> Result<()> {
-        let commands = self.as_commands()?;
-        Render::render(commands)?;
-        
-        Ok(())
-    }
 }
 
 
 #[cfg(test)]
 mod tests {
-    use gnuplotter::prelude::Required::Missing;
     use super::*;
 
     #[test]
@@ -89,7 +79,7 @@ mod tests {
 
     #[test]
     fn test_plot_creation() {
-        let mut plot = Plot2D::default();
+        let mut plot = Plot2D::new();
 
         assert_eq!(plot.title(), &mut Maybe::Nothing);
         assert_eq!(plot.x(), &mut XAxis::default());
