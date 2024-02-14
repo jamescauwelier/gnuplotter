@@ -1,7 +1,7 @@
 [package]
 name = "gnuplotter_macros"
 description = "Dependency for gnuplotter providing it with procedural macro utilities"
-version = "0.1.7-alpha"
+version = "0.2.1-alpha"
 edition = "2021"
 license-file = "../.github/LICENSE"
 
@@ -11,7 +11,7 @@ license-file = "../.github/LICENSE"
 proc-macro = true
 
 [dependencies]
-gnuplotter_core = { path = "../gnuplotter_core", version= "0.1.7-alpha" }
+gnuplotter_core = { path = "../gnuplotter_core", version= "0.2.1-alpha" }
 derive_builder = "0.12.0"
 quote = "1.0.35"
 syn = { version = "2.0.48", features = ["derive", "parsing", "printing", "clone-impls", "extra-traits", "proc-macro", "full"] }
