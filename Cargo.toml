@@ -1,9 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = [ "examples/*", "gnuplotter", "gnuplotter_core",
-    "gnuplotter_macros",
-]
+members = [ "gnuplotter", "gnuplotter_core", "gnuplotter_macros",]
 
 [profile.test]
 lto = false
