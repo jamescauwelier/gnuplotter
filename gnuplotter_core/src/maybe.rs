@@ -11,8 +11,8 @@ impl<T> Maybe<T> {
         Maybe::Value(value)
     }
 
-    pub fn update(&mut self, value: T) {
-        std::mem::swap(self, &mut Maybe::Value(value));
+    pub fn update<S>(&mut self, value: S) where S: Into<T> {
+        std::mem::swap(self, &mut Maybe::Value(value.into()));
     }
 
     pub fn unwrap(self) -> T {
@@ -45,6 +45,7 @@ impl<T> Default for Maybe<T> {
 
 #[cfg(test)]
 mod tests {
+    use crate::prelude::Required;
     use super::*;
 
     #[test]
@@ -64,6 +65,14 @@ mod tests {
         let mut maybe: Maybe<i32> = Maybe::value(123);
         maybe.update(456);
         assert_eq!(maybe, Maybe::Value(456));
+    }
+
+    #[test]
+    fn test_updating_convertable_value(){
+        let mut maybe = Maybe::<String>::Nothing;
+        maybe.update("something that can be converted");
+
+        assert_eq!(maybe, Maybe::Value(String::from("something that can be converted")));
     }
 
     mod conversions {

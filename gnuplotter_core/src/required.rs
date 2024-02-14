@@ -15,8 +15,8 @@ impl<T> Required<T> {
         Required::Value(value)
     }
 
-    pub fn update(&mut self, value: T) {
-        std::mem::swap(self, &mut Required::value(value));
+    pub fn update<S>(&mut self, value: S) where S: Into<T> {
+        std::mem::swap(self, &mut Required::value(value.into()));
     }
 
     pub fn unwrap(self) -> T {
@@ -73,6 +73,14 @@ mod tests {
         let mut required: Required<i32> = Required::value(123);
         required.update(456);
         assert_eq!(required, Required::Value(456));
+    }
+
+    #[test]
+    fn test_updating_convertable_value(){
+        let mut required = Required::<String>::missing();
+        required.update("something that can be converted");
+
+        assert_eq!(required, Required::Value(String::from("something that can be converted")));
     }
 
     mod conversions {

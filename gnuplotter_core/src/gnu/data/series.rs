@@ -185,12 +185,12 @@ mod tests {
 
     #[test]
     fn test_series_command() {
-        let mut serie_1 = Serie::with_title(Some("A".into()));
+        let mut serie_1 = Serie::with_title("A");
         serie_1.add(1.0);
         serie_1.add(2.0);
         serie_1.add(3.0);
 
-        let mut serie_2 = Serie::with_title(Some("B".into()));
+        let mut serie_2 = Serie::with_title("B");
         serie_2.add(2.0);
         serie_2.add(4.0);
         serie_2.add(6.0);

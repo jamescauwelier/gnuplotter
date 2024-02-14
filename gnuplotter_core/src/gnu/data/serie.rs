@@ -15,9 +15,9 @@ where
         Serie::default()
     }
 
-    pub fn with_title(title: Option<String>) -> Self {
+    pub fn with_title(title: &str) -> Self {
         Serie {
-            title,
+            title: Some(title.to_string()),
             data: vec![]
         }
     }
@@ -60,7 +60,7 @@ mod tests {
 
     #[test]
     fn test_serie_creation_with_title() {
-        let serie = Serie::<f64>::with_title(Some("Serie A".into()));
+        let serie = Serie::<f64>::with_title("Serie A");
         assert_eq!(serie.data.len(), 0);
         assert_eq!(serie.title(), &Some("Serie A".into()));
     }

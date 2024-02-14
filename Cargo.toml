@@ -2,7 +2,7 @@
 resolver = "2"
 
 members = [ "examples/*", "gnuplotter", "gnuplotter_core",
-    "gnuplotter_macros", "gnuplotter_tests",
+    "gnuplotter_macros",
 ]
 
 [profile.test]
