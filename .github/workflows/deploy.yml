@@ -31,7 +31,17 @@ jobs:
           args: --doc
 #      - name: Check semver
 #        uses: obi1kenobi/cargo-semver-checks-action@v2
-      - name: Publish to crates.io
+      - name: Publish gnuplotter_core to crates.io
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
+          args: --all-features --allow-dirty -p gnuplotter_core --token=${{secrets.CRATESIO}}
+      - name: Publish gnuplotter_macro to crates.io
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
+          args: --all-features --allow-dirty -p gnuplotter_macros --token=${{secrets.CRATESIO}}
+      - name: Publish main library to crates.io
         uses: actions-rs/cargo@v1
         with:
           command: publish

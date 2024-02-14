@@ -182,7 +182,7 @@ dependencies = [
 
 [[package]]
 name = "gnuplotter"
-version = "0.2.1-alpha"
+version = "0.2.2-alpha"
 dependencies = [
  "gnuplotter_core",
  "gnuplotter_macros",
@@ -190,7 +190,7 @@ dependencies = [
 
 [[package]]
 name = "gnuplotter_core"
-version = "0.2.1-alpha"
+version = "0.2.2-alpha"
 dependencies = [
  "either",
  "rand",
@@ -198,7 +198,7 @@ dependencies = [
 
 [[package]]
 name = "gnuplotter_macros"
-version = "0.2.1-alpha"
+version = "0.2.2-alpha"
 dependencies = [
  "derive_builder",
  "gnuplotter_core",
