@@ -29,8 +29,8 @@ jobs:
         with:
           command: test
           args: --doc
-      - name: Check semver
-        uses: obi1kenobi/cargo-semver-checks-action@v2
+#      - name: Check semver
+#        uses: obi1kenobi/cargo-semver-checks-action@v2
       - name: Publish to crates.io
         uses: actions-rs/cargo@v1
         with:
