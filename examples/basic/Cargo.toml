@@ -1,0 +1,9 @@
+[package]
+name = "basic"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gnuplotter = { path = "../../gnuplotter", version = "0.1.7-alpha" }
