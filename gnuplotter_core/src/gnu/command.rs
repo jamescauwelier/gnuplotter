@@ -1,5 +1,5 @@
 use std::collections::VecDeque;
-use std::fmt::Display;
+use std::fmt::{Debug, Display, Formatter, Write};
 use crate::prelude::*;
 
 pub mod title;
@@ -41,17 +41,54 @@ impl GnuCommand {
     }
 }
 
+pub enum GnuCommandFactoryError {
+    RequiredValueMissing(String),
+    IOError(String),
+    Message(String),
+}
+
+impl GnuCommandFactoryError {
+    pub fn required_value_missing(msg: &str) -> GnuCommandFactoryError {
+        GnuCommandFactoryError::RequiredValueMissing(msg.into())
+    }
+
+    pub fn io_error(msg: &str) -> GnuCommandFactoryError {
+        GnuCommandFactoryError::IOError(msg.into())
+    }
+
+    pub fn message(msg: &str) -> GnuCommandFactoryError {
+        GnuCommandFactoryError::Message(msg.into())
+    }
+}
+
+impl Debug for GnuCommandFactoryError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            GnuCommandFactoryError::RequiredValueMissing(msg) =>
+                f.write_str(msg),
+            GnuCommandFactoryError::IOError(msg) =>
+                f.write_str(msg),
+            GnuCommandFactoryError::Message(msg) =>
+                f.write_str(msg),
+        }
+    }
+}
+
+pub type GnuCommandFactoryResult = std::result::Result<VecDeque<GnuCommand>, GnuCommandFactoryError>;
+
 pub trait GnuCommandFactory {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>>;
+    fn as_commands(&self) -> GnuCommandFactoryResult;
 }
 
 impl<T> GnuCommandFactory for Required<T>
 where
     T: GnuCommandFactory
 {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         match self {
-            Required::Missing => panic!("A required value must be present before commands can be generated."),
+            Required::Missing => Err(
+                GnuCommandFactoryError::required_value_missing("A required value is missing, but needs a value when producing GnuCommands")
+            ),
             Required::Value(value) => value.as_commands()
         }
     }
@@ -61,7 +98,7 @@ impl<T> GnuCommandFactory for Maybe<T>
     where
         T: GnuCommandFactory
 {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         match self {
             Maybe::Nothing => Ok(vec![].into()),
             Maybe::Value(value) => value.as_commands()

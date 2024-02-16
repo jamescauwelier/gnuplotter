@@ -20,7 +20,7 @@ pub(crate) fn gnu_command_factory(item: &ItemStruct) -> proc_macro2::TokenStream
     }
     implementation = quote! {
         impl #generics GnuCommandFactory for #struct_name #where_clause {
-            fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+            fn as_commands(&self) -> GnuCommandFactoryResult {
                 let mut commands = VecDeque::new();
                 #implementation
 

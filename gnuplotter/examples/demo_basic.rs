@@ -75,7 +75,7 @@ pub fn main() {
 }
 
 /// Produces a basic plot by instantiating and configuring the structure, before adding data to it.
-pub fn basic_plot() -> Result<()> {
+pub fn basic_plot() -> RenderResult<()> {
 
     // initialize the plot
     let mut plot = BasicPlot::new();

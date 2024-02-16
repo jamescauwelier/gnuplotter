@@ -31,7 +31,21 @@
 //!
 //! ### Easy customization over prescribing a flexible API
 //!
+//! One way to approach a plotting library would be to decide on a certain type of plot to support
+//! and then to go implement a very flexible version of it. You would decide which features to
+//! activate based on what methods are being called. For the engineers using such a library, there
+//! is a lot of API details to familiarize themselves with. I asked myself the question how this
+//! might be simplified. If I just want an x label, a y label, and a title, why do I care about the
+//! rest of a fairly complex API?
 //!
+//! The goal of gnuplotter is therefore to hide as much of the implementation details of a plot type
+//! as possible. One engineer might define a new plot type declaratively, while other engineers from
+//! that point only need to concern themselves with this very minimal API.
+//!
+//! In other words, gnuplotter enables the composition of a new plot type based on a user's specific
+//! needs, which we know very little about. The aim is to offer flexibility in the amount of
+//! plotting features made available, balanced by an ability to simplify plotting API's based on
+//! a very specific user's context.
 
 pub use gnuplotter_core::required;
 pub use gnuplotter_core::maybe;

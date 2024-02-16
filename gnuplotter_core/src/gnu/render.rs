@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::fmt::{Debug, Display, Formatter};
 use std::io::Write;
 use std::process::{Command, Stdio, Child, ChildStdin};
 use crate::prelude::*;
@@ -10,6 +11,8 @@ pub struct Render;
 /// in gnuplot syntax. The only thing these errors indicate is some kind of success or error in the
 /// process of communicating with gnuplot.
 pub enum RenderError {
+    /// When calling `.as_commands()` fails with an error message
+    CommandGenerationFailed(String),
     /// Sending the command by writing to the STDIN of the command failed. This does not indicate an error in your command.
     WritingCommandFailed,
     /// Spawning the child process for gnuplot failed. Verify you have Gnuplot installed and available.
@@ -22,19 +25,42 @@ pub enum RenderError {
     WaitingForGnuPlotFailed
 }
 
-impl From<RenderError> for String {
-    fn from(value: RenderError) -> Self {
-        match value {
-            RenderError::WritingCommandFailed => "Failed to `write` command to GnuPlot",
-            RenderError::GnuSpawnFailed => "Failed to spawn GnuPlot. Verify it is correctly installed and available",
-            RenderError::GnuSTDINNotAccessible => "GnuPlot STDIN cannot be accessed",
-            RenderError::WaitingForGnuPlotFailed => "Waiting for Gnu Plot failed. Check your command syntax for errors."
-        }.into()
+impl Display for RenderError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let msg = match self {
+            RenderError::CommandGenerationFailed(msg) => format!("Command generation failed: {}", msg),
+            RenderError::WritingCommandFailed => "Failed to `write` command to GnuPlot".into(),
+            RenderError::GnuSpawnFailed => "Failed to spawn GnuPlot. Verify it is correctly installed and available".into(),
+            RenderError::GnuSTDINNotAccessible => "GnuPlot STDIN cannot be accessed".into(),
+            RenderError::WaitingForGnuPlotFailed => "Waiting for Gnu Plot failed. Check your command syntax for errors.".into()
+        };
+        f.write_fmt(format_args!("{}", msg))
     }
 }
 
+impl Debug for RenderError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_fmt(format_args!("{}", self))
+    }
+}
+
+impl From<GnuCommandFactoryError> for RenderError {
+    fn from(value: GnuCommandFactoryError) -> Self {
+        match value {
+            GnuCommandFactoryError::Message(msg) =>
+                RenderError::CommandGenerationFailed(msg),
+            GnuCommandFactoryError::RequiredValueMissing(msg) =>
+                RenderError::CommandGenerationFailed(msg),
+            GnuCommandFactoryError::IOError(msg) =>
+                RenderError::CommandGenerationFailed(msg),
+        }
+    }
+}
+
+pub type RenderResult<T> = std::result::Result<T, RenderError>;
+
 impl Render {
-    pub fn render(commands: VecDeque<GnuCommand>) -> Result<()> {
+    pub fn render(commands: VecDeque<GnuCommand>) -> RenderResult<()> {
 
         let commands: Vec<GnuCommand> = commands.into();
 
@@ -58,10 +84,8 @@ impl Render {
 }
 
 pub trait CanRender: GnuCommandFactory {
-    fn render(&self) -> Result<()> {
+    fn render(&self) -> RenderResult<()> {
         let commands = self.as_commands()?;
-        Render::render(commands)?;
-
-        Ok(())
+        Render::render(commands)
     }
 }

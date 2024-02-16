@@ -5,6 +5,18 @@ use std::io::Write;
 use rand::random;
 use crate::prelude::*;
 
+pub enum SeriesError {
+    IOError(String)
+}
+
+impl SeriesError {
+    pub fn io_error(msg: &str) -> SeriesError {
+        SeriesError::IOError(msg.into())
+    }
+}
+
+pub type SeriesResult = std::result::Result<String, SeriesError>;
+
 #[derive(Default, PartialEq, Debug, Clone)]
 pub struct Series<T>
 where
@@ -45,20 +57,24 @@ where
         }
     }
 
-    pub fn write_to_file(&self, filename: &str) -> Result<String> {
+    pub fn write_to_file(&self, filename: &str) -> SeriesResult {
         match File::create(filename) {
             Ok(mut file) => {
 
                 for (index, values) in self.iter() {
                     let data = values.iter().map(|x| x.to_string()).collect::<Vec<String>>().join("\t");
                     if let Err(_) = writeln!(file, "{}\t{}", index, data) {
-                        return Err("Unable to write series data".into());
+                        return Err(
+                            SeriesError::io_error("Unable to write series data".into())
+                        )
                     }
                 }
 
                 Ok(filename.into())
             },
-            Err(_) => Err("Unable to create file.".into())
+            Err(_) => Err(
+                SeriesError::IOError("Unable to create file.".into())
+            )
         }
     }
 }
@@ -96,11 +112,20 @@ where
     }
 }
 
+impl From<SeriesError> for GnuCommandFactoryError {
+    fn from(value: SeriesError) -> Self {
+        match value {
+            SeriesError::IOError(msg) =>
+                GnuCommandFactoryError::IOError(msg)
+        }
+    }
+}
+
 impl<T> GnuCommandFactory for Series<T>
 where
     T: Default + Clone + ToString
 {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
 
         use std::fs;
         let _ = fs::create_dir(".tmp");
@@ -116,7 +141,7 @@ where
                 command += &format!("\"{}\" using 1:{} title '' with linespoint, ", filename, i + 2);
             }
         }
-        let command = command.strip_suffix(", ").ok_or("Unable to strip suffix")?;
+        let command = command.strip_suffix(", ").ok_or(GnuCommandFactoryError::message("Unable to strip suffix"))?;
 
         Ok(
             vec![GnuCommand::new(command)].into()

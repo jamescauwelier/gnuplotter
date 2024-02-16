@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use crate::gnu::command::config::terminal::PngCairo;
 use crate::prelude::{GnuCommand, GnuCommandFactory};
+use crate::prelude::prelude::GnuCommandFactoryResult;
 
 pub mod terminal;
 pub mod filename;
@@ -17,7 +18,7 @@ impl Config {
 }
 
 impl GnuCommandFactory for Config {
-    fn as_commands(&self) -> crate::prelude::Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         let mut commands: VecDeque<GnuCommand> = vec![].into();
         commands.append(&mut self.terminal.as_commands()?);
 

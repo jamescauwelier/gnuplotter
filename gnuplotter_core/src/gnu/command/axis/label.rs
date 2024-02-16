@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use std::marker::PhantomData;
 use crate::prelude::*;
+use crate::prelude::prelude::GnuCommandFactoryResult;
 
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -61,7 +62,7 @@ impl<D> GnuCommandFactory for Label<D>
 where
     D: Dimension
 {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         let command = GnuCommand::new(format!("set {}label \"{}\"", D::name(), self.text));
         Ok(
             vec![command].into()
@@ -135,7 +136,7 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "A required value must be present before commands can be generated.")]
+    #[should_panic(expected = "A required value is missing, but needs a value when producing GnuCommands")]
     fn test_a_missing_required_label_has_no_label_information() {
         let label: Required<Label<X>> = Required::Missing;
         let commands = label.as_commands().unwrap();

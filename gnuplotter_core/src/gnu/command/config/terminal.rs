@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use std::fmt::{Display, Formatter};
 use crate::prelude::*;
+use crate::prelude::prelude::GnuCommandFactoryResult;
 
 trait Terminal : GnuCommandFactory {}
 
@@ -83,7 +84,7 @@ impl PngCairoOutput {
 }
 
 impl GnuCommandFactory for PngCairoOutput {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         match self {
             PngCairoOutput::Missing =>
                 panic!("PNGCairo requires an output file: TERMINAL.output().update(\"./filename.png\")"),
@@ -118,7 +119,7 @@ impl PngCairo {
 impl Terminal for PngCairo {}
 
 impl GnuCommandFactory for PngCairo {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         let mut commands = VecDeque::new();
         commands.append(&mut self.output.as_commands()?);
         commands.push_back(

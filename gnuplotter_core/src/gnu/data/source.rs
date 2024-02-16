@@ -8,7 +8,7 @@ pub trait DataSource {
 }
 
 impl GnuCommandFactory for dyn DataSource {
-    fn as_commands(&self) -> Result<VecDeque<GnuCommand>> {
+    fn as_commands(&self) -> GnuCommandFactoryResult {
         Ok(
             vec![
                 GnuCommand::new("some command")
