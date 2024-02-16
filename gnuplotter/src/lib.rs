@@ -46,6 +46,33 @@
 //! needs, which we know very little about. The aim is to offer flexibility in the amount of
 //! plotting features made available, balanced by an ability to simplify plotting API's based on
 //! a very specific user's context.
+//!
+//! ## Solution
+//!
+//! ### Gnu commands
+//!
+//! Adding features to the library is easy. Just encode them in a struct that implements the
+//! `GnuCommandFactory` trait. A `GnuCommand` is nothing more that a way to generate a string
+//! representation of a command you would send to gnuplot yourself when using the CLI or a script.
+//!
+//! ### Composing commands
+//!
+//! These commands are then composed in a queue. A struct that consists of other elements, such as
+//! the `Axis<T>` in the example linked below, or ADT's such as `Required<T>` implement the
+//! `GnuCommandFactory` to compose the commands into a single queue.
+//!
+//! ### Rendering plots using gnuplot backend
+//!
+//! In the end, all collected commands are written to gnuplot by calling the gnuplot command from
+//! within the rust program. This is made available through a simple `CanRender` trait that is
+//! easily derived using the `Plot` macro.
+//!
+//! ## Examples
+//!
+//! ### [Basic demo](https://github.com/jamescauwelier/gnuplotter/blob/main/gnuplotter/examples/demo_basic.rs)
+//!
+//! A basic demonstration constructs a simple 2D plot with two labeled axis (X and Y) of which one
+//! is optional. It shows both how to define a plot struct and how a user can use it.
 
 pub use gnuplotter_core::required;
 pub use gnuplotter_core::maybe;
